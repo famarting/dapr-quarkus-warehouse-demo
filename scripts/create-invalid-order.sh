@@ -1,0 +1,1 @@
+http http://$(oc get route orders-rest-api -o jsonpath='{.status.ingress[0].host}')/create-order item-id=abc quantity:=0

@@ -1,0 +1,44 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: orders-service
+  namespace: warehouse-dapr
+  labels:
+    app: orders-service
+spec:
+  selector:
+    app: orders-service
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-service
+  namespace: warehouse-dapr
+  labels:
+    app: orders-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orders-service
+  template:
+    metadata:
+      labels:
+        app: orders-service
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/id: "orders-service"
+        dapr.io/port: "8080"
+        dapr.io/log-level: "debug"
+    spec:
+      containers:
+      - name: orders-service
+        image: quay.io/famargon/dapr-orders-service:latest
+        ports:
+        - containerPort: 8080
+        imagePullPolicy: Always

@@ -1,0 +1,60 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: orders-rest-api
+  namespace: warehouse-dapr
+  labels:
+    app: orders-rest-api
+spec:
+  selector:
+    app: orders-rest-api
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: orders-rest-api
+  name: orders-rest-api
+  namespace: warehouse-dapr
+spec:
+  port:
+    targetPort: 8080
+  to:
+    kind: Service
+    name: orders-rest-api
+    weight: 100
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-rest-api
+  namespace: warehouse-dapr
+  labels:
+    app: orders-rest-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orders-rest-api
+  template:
+    metadata:
+      labels:
+        app: orders-rest-api
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/id: "orders-rest-api"
+        dapr.io/port: "8080"
+        dapr.io/log-level: "debug"
+    spec:
+      containers:
+      - name: orders-rest-api
+        image: quay.io/famargon/dapr-orders-rest-api:latest
+        ports:
+        - containerPort: 8080
+        imagePullPolicy: Always

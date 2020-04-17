@@ -1,0 +1,1 @@
+oc logs $(oc get pod -l=app=demo-service -o jsonpath='{.items[0].metadata.name}') -c demo-service -f

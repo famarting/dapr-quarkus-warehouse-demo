@@ -1,0 +1,44 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: demo-service
+  namespace: warehouse-dapr
+  labels:
+    app: demo-service
+spec:
+  selector:
+    app: demo-service
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-service
+  namespace: warehouse-dapr
+  labels:
+    app: demo-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-service
+  template:
+    metadata:
+      labels:
+        app: demo-service
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/id: "demo-service"
+        dapr.io/port: "8080"
+        dapr.io/log-level: "debug"
+    spec:
+      containers:
+      - name: demo-service
+        image: quay.io/famargon/dapr-demo-service:latest
+        ports:
+        - containerPort: 8080
+        imagePullPolicy: Always

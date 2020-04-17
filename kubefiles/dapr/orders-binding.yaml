@@ -1,0 +1,18 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: orders
+  namespace: warehouse-dapr
+spec:
+  type: bindings.kafka
+  metadata:
+  - name: topics
+    value: orders
+  - name: brokers
+    value: warehouse-kafka-cluster-kafka-bootstrap:9092
+  - name: consumerGroup
+    value: orders-group1
+  - name: publishTopic
+    value: orders
+  - name: authRequired
+    value: "false" 

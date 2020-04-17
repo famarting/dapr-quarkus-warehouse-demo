@@ -1,0 +1,10 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: stocks-store
+  namespace: warehouse-dapr
+spec:
+  type: state.redis
+  metadata:
+  - name: redisHost
+    value: redis-master:6379

@@ -1,0 +1,44 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: stocks-service
+  namespace: warehouse-dapr
+  labels:
+    app: stocks-service
+spec:
+  selector:
+    app: stocks-service
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stocks-service
+  namespace: warehouse-dapr
+  labels:
+    app: stocks-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stocks-service
+  template:
+    metadata:
+      labels:
+        app: stocks-service
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/id: "stocks-service"
+        dapr.io/port: "8080"
+        dapr.io/log-level: "debug"
+    spec:
+      containers:
+      - name: stocks-service
+        image: quay.io/famargon/dapr-stocks-service:latest
+        ports:
+        - containerPort: 8080
+        imagePullPolicy: Always
